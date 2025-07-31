@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bias Detector</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f9f9f9; 
+        }
+        h1 { 
+            color: #333; 
+        }
+        textarea { 
+            width: 100%; 
+            height: 200px; 
+            margin-bottom: 10px; 
+            padding: 10px;
+            font-size: 16px;
+        }
+        button { 
+            padding: 10px 20px; 
+            background-color: #007BFF; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result { 
+            margin-top: 20px; 
+            padding: 10px; 
+            background: #fff; 
+            border: 1px solid #ccc; 
+        }
+        .highlight { 
+            color: red; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+<h1>🧠 AI-Backed Bias Detector</h1>
+
+<textarea id="newsText" placeholder="Paste your news article here..."></textarea>
+<br>
+<button onclick="analyzeText()">Analyze</button>
+
+<div class="result" id="result" style="display:none;">
+    <p><strong>Bias:</strong> <span id="bias"></span></p>
+    <p><strong>Confidence Score:</strong> <span id="score"></span></p>
+    <p><strong>Highlights:</strong> <span id="highlights"></span></p>
+</div>
+
+<script>
+function analyzeText() {
+    const text = document.getElementById('newsText').value;
+
+    fetch('http://localhost:8080/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('bias').innerText = data.bias;
+        document.getElementById('score').innerText = data.score;
+        document.getElementById('highlights').innerHTML = 
+            data.highlights.map(h => '<span class="highlight">' + h + '</span>').join(', ');
+    })
+    .catch(error => {
+        alert("Error analyzing text: " + error);
+    });
+}
+</script>
+
+</body>
+</html>
